@@ -8,6 +8,7 @@ import { CreateTaskDto } from './dtos/create-task-dto';
 import { Task } from 'prisma/generated';
 import { JwtUserPayload } from 'src/utils/types';
 import { UpdateTaskDto } from './dtos/update-task-dto';
+import { existsSync, unlinkSync } from 'fs';
 
 @Injectable()
 export class TasksService {
@@ -99,5 +100,34 @@ export class TasksService {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  // tasks.service.ts
+  async uploadFile(id: string, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    const task = await this.prisma.task.findUnique({ where: { id } });
+    if (!task) {
+      // Clean up uploaded file if task doesn't exist
+      if (file.path && existsSync(file.path)) {
+        unlinkSync(file.path);
+      }
+      throw new NotFoundException('Task not found');
+    }
+
+    // Update with new attachment
+    const updatedTask = await this.prisma.task.update({
+      where: { id },
+      data: {
+        attachment_url: `/uploads/${file.filename}`,
+      },
+    });
+
+    return {
+      message: 'File uploaded successfully',
+      data: updatedTask.attachment_url,
+    };
   }
 }

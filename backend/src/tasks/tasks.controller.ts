@@ -4,9 +4,11 @@ import {
   Delete,
   Get,
   Param,
+  UploadedFile,
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,6 +19,8 @@ import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { GetUser } from 'src/decorator/get.decorator';
 import { JwtUserPayload } from 'src/utils/types';
 import { UpdateTaskDto } from './dtos/update-task-dto';
+import { multerConfig } from 'src/config/multer.config';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
@@ -48,5 +52,14 @@ export class TasksController {
     @Body() task: UpdateTaskDto,
   ): Promise<{ message: string; data: Task }> {
     return await this.tasksService.updateTask(id, task);
+  }
+
+  @Post(':id/upload')
+  @UseInterceptors(FileInterceptor('attachment_url', multerConfig)) // Match your form field name
+  async uploadFile(
+    @Param('id') id: string,
+    @UploadedFile() attachment_url: Express.Multer.File, // This will now properly get the file
+  ) {
+    return this.tasksService.uploadFile(id, attachment_url);
   }
 }
