@@ -1,13 +1,19 @@
 // import Register from "./components/Register";
 // import Sign from "./components/Sign";
+import { useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Dashboard from "./view/Dashboard/Dashboard";
+import Routers from "./Routers/Routers";
+import { Toaster } from "./components/Toaster";
 
 function App(){
+
+  const location = useLocation(); 
+  console.log(location)
   return(
     <div className="h-screen w-screen bg-gradient-to-r-custom">
-      <Navbar />
-      <Dashboard />
+      <Toaster />
+      {location.pathname !== "/sign" && location.pathname !== "/register" && <Navbar />}
+      <Routers />
     </div>
   )
 }

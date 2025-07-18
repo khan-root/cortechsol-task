@@ -1,6 +1,17 @@
 import { FaExpeditedssl, FaTrash } from "react-icons/fa6"
+import useStore from "../../store/store"
+import { useQuery } from "@tanstack/react-query";
 
 const Dashboard = () => {
+  const getTasks = useStore((state)=> state.getTasks)
+
+  const {data, isLoading, error} = useQuery({
+    queryKey: ["tasks"],
+    queryFn: getTasks,
+  })
+
+  console.log(data)
+
   return (
     <div className="h-fit w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
       {[{key: 1, title: "Todo"}, {key: 2, title: "In Progress"}, {key: 3, title: "Done"}].map((item, index)=>{
