@@ -4,6 +4,8 @@ import { Button } from './ui/button';
 import { fetcher } from '../lib/fetcher';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from './Toaster';
+import { Loader2Icon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Sign = () => {
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ const Sign = () => {
 
       return errors;
     },
-    onSubmit: async (values, {setSubmitting, setErrors,}) => {
+    onSubmit: async (values, {setSubmitting}) => {
       console.log('Submitted values:', values);
       try {
     const res: { access_token: string } = await fetcher("/auth/login", {
@@ -39,8 +41,12 @@ const Sign = () => {
 
       localStorage.setItem("token", res.access_token);
       navigate("/");
-    } catch (err: any) {
-      showToast(err.message, 'error');
+    } catch (err) {
+      if (err instanceof Error) {
+        showToast(err.message, 'error');
+      } else {
+        showToast('An unexpected error occurred', 'error');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -89,9 +95,9 @@ const Sign = () => {
           </div>
 
           <div className="flex justify-end">
-            <span className="text-white text-sm cursor-pointer hover:text-white/80">
+            <Link to="/register" className="text-white text-sm cursor-pointer hover:text-white/80">
               Don't have an account? Register
-            </span>
+            </Link>
           </div>
 
           <div className="flex justify-center">
@@ -99,7 +105,11 @@ const Sign = () => {
               type="submit"
               className="bg-white text-black cursor-pointer hover:bg-white/80 hover:text-black"
             >
-              Sign
+              {formik.isSubmitting ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                "Sign"
+              )}
             </Button>
           </div>
         </form>
