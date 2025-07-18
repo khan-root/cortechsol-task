@@ -7,7 +7,7 @@ import { showToast } from './Toaster';
 import { Loader2Icon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const Sign = () => {
+const SignIn = () => {
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -58,7 +58,7 @@ const Sign = () => {
     <div className='h-full w-full flex flex-col items-center justify-center'>
       <div className='h-full w-[70%] md:h-[50%] md:w-[40%] flex flex-col items-center justify-center'>
         <div className="flex items-center justify-center">
-          <h2 className="text-white text-2xl font-bold">Sign</h2>
+          <h2 className="text-white text-2xl font-bold">Log In</h2>
         </div>
 
         <form onSubmit={formik.handleSubmit} className="space-y-4 w-full px-10 md:p-10">
@@ -108,7 +108,7 @@ const Sign = () => {
               {formik.isSubmitting ? (
                 <Loader2Icon className="animate-spin" />
               ) : (
-                "Sign"
+                "SignIn"
               )}
             </Button>
           </div>
@@ -118,4 +118,4 @@ const Sign = () => {
   );
 };
 
-export default Sign;
+export default SignIn;

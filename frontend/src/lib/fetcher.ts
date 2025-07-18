@@ -4,15 +4,23 @@ export const fetcher = async <T>(
   input: RequestInfo,
   init?: RequestInit
 ): Promise<T> => {
-  const token = localStorage.getItem("token"); // or whatever key you use
+  const token = localStorage.getItem("token");
+  const isFormData = init?.body instanceof FormData;
+
+  // Start with a plain object for headers
+  const headers: Record<string, string> = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(init?.headers as Record<string, string>),
+  };
+
+  // Set Content-Type only if not uploading FormData
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const res = await fetch(`${VITE_API_URL}${input}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(init?.headers || {}),
-    },
+    headers,
   });
 
   if (!res.ok) {

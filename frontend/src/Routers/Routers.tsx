@@ -1,17 +1,18 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "../view/Dashboard/Dashboard";
 import GuardRoute from "./GuardRoute";
 import GuestRoute from "./GuestRoute";
-import Sign from "../components/Sign";
+import SignIn from "../components/SignIn";
 import Register from "../components/Register";
 
 const Routers = () => {
   return (
     <Routes>
       <Route path="/" element={<GuardRoute><Dashboard /></GuardRoute>} />
-      <Route path="/sign" element={<GuestRoute><Sign /></GuestRoute>} />
+      <Route path="/signin" element={<GuestRoute><SignIn /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+      <Route path="*" element={<Navigate to="/signin" />} />
     </Routes>
   );
 };

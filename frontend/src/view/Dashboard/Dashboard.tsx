@@ -1,48 +1,32 @@
-import { FaExpeditedssl, FaTrash } from "react-icons/fa6"
-import useStore from "../../store/store"
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Button } from "../../components/ui/button"
+import Tasks from "./Tasks"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import AddTask from "./AddTask";
 
 const Dashboard = () => {
-  const getTasks = useStore((state)=> state.getTasks)
-
-  const {data, isLoading, error} = useQuery({
-    queryKey: ["tasks"],
-    queryFn: getTasks,
-  })
-
-  console.log(data)
-
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const handleOpenDialog = () => {
+    setOpenDialog(!openDialog);
+  }
   return (
-    <div className="h-fit w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {[{key: 1, title: "Todo"}, {key: 2, title: "In Progress"}, {key: 3, title: "Done"}].map((item, index)=>{
-        return (
-          <div key={index} className="bg-white p-3 space-y-2 rounded-lg shadow-2xl">
-            <div className="flex justify-between items-center ">
-              <span>{item.title}</span>
-              
-            </div>
-            {[1,2,3].map((item, index)=>{
-              return (
-                <div key={index} className="border border-black w-full flex justify-center items-center py-1 px-2">
-                  <div className="w-full h-full flex justify-between items-center border border-black">
-                    <div className="flex-1">
-                      Title
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span>
-                        <FaExpeditedssl />
-                      </span>
-                      <span>
-                        <FaTrash />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )
-      })}
+    <div className="p-4">
+      <div className="flex justify-end">
+        <Button className="bg-white text-black cursor-pointer hover:bg-white/80 hover:text-black" onClick={handleOpenDialog}>Add Task</Button>
+      </div>
+      <Tasks />
+      {openDialog && 
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent>
+            <DialogHeader>    
+              <DialogTitle>Add Task</DialogTitle>
+            </DialogHeader>
+            <AddTask 
+              handleOpenDialog ={handleOpenDialog}
+            />
+          </DialogContent>
+        </Dialog>
+      }
     </div>
   )
 }

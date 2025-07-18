@@ -16,8 +16,6 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dtos/create-task-dto';
 import { Task } from 'prisma/generated';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
-import { GetUser } from 'src/decorator/get.decorator';
-import { JwtUserPayload } from 'src/utils/types';
 import { UpdateTaskDto } from './dtos/update-task-dto';
 import { multerConfig } from 'src/config/multer.config';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -31,9 +29,8 @@ export class TasksController {
   @UsePipes(new ValidationPipe())
   async createTask(
     @Body() task: CreateTaskDto,
-    @GetUser() user: JwtUserPayload,
   ): Promise<{ message: string; data: Task }> {
-    return await this.tasksService.createTask(task, user);
+    return await this.tasksService.createTask(task);
   }
 
   @Get()

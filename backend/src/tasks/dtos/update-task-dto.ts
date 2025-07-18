@@ -25,6 +25,10 @@ export class UpdateTaskDto {
   @IsOptional()
   priority?: TaskPriority;
 
+  @IsOptional()
+  @IsString()
+  assignee_id?: string;
+
   @Transform(({ value }) => new Date(Number(value) * 1000), {
     toClassOnly: true,
   })

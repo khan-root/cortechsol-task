@@ -6,7 +6,6 @@ import {
 import { PrismaService } from 'src/config/prisma.service';
 import { CreateTaskDto } from './dtos/create-task-dto';
 import { Task } from 'prisma/generated';
-import { JwtUserPayload } from 'src/utils/types';
 import { UpdateTaskDto } from './dtos/update-task-dto';
 import { existsSync, unlinkSync } from 'fs';
 
@@ -16,7 +15,6 @@ export class TasksService {
 
   async createTask(
     task: CreateTaskDto,
-    user: JwtUserPayload,
   ): Promise<{ message: string; data: Task }> {
     console.log(typeof task.due_date);
     try {
@@ -26,8 +24,16 @@ export class TasksService {
           description: task.description,
           status: task.status,
           priority: task.priority,
-          assignee_id: user.id,
+          assignee_id: task.assignee_id,
           due_date: new Date(Number(task.due_date) * 1000),
+        },
+        include: {
+          assignee: {
+            select: {
+              id: true,
+              full_name: true,
+            },
+          },
         },
       });
       return {
@@ -41,7 +47,16 @@ export class TasksService {
 
   async getTasks(): Promise<{ message: string; data: Task[] }> {
     try {
-      const tasks = await this.prisma.task.findMany();
+      const tasks = await this.prisma.task.findMany({
+        include: {
+          assignee: {
+            select: {
+              id: true,
+              full_name: true,
+            },
+          },
+        },
+      });
       if (tasks.length === 0) {
         return {
           message: 'No tasks found',
@@ -88,9 +103,18 @@ export class TasksService {
           description: task.description,
           status: task.status,
           priority: task.priority,
+          assignee_id: task.assignee_id,
           due_date: task.due_date
             ? new Date(Number(task.due_date) * 1000)
             : taskToUpdate.due_date,
+        },
+        include: {
+          assignee: {
+            select: {
+              id: true,
+              full_name: true,
+            },
+          },
         },
       });
       return {
@@ -122,6 +146,14 @@ export class TasksService {
       where: { id },
       data: {
         attachment_url: `/uploads/${file.filename}`,
+      },
+      include: {
+        assignee: {
+          select: {
+            id: true,
+            full_name: true,
+          },
+        },
       },
     });
 
