@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { TaskPriority, TaskStatus } from 'prisma/generated';
+import { IsFutureDate } from 'src/decorator/is-future-date.decorator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -32,5 +33,6 @@ export class CreateTaskDto {
     toClassOnly: true,
   })
   @IsDate()
+  @IsFutureDate()
   due_date: Date;
 }
