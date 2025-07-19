@@ -27,10 +27,9 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: {
         email,
         full_name,
@@ -49,12 +48,13 @@ export class AuthService {
     const findUser = await this.prisma.user.findUnique({
       where: { email },
     });
+
     if (!findUser) {
       throw new NotFoundException('User not found');
     }
     const isPasswordValid = await bcrypt.compare(
       password,
-      findUser.password_hash, 
+      findUser.password_hash,
     );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
