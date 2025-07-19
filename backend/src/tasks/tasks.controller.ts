@@ -44,6 +44,7 @@ export class TasksController {
   }
 
   @Put(':id')
+  @UsePipes(new ValidationPipe())
   async updateTask(
     @Param('id') id: string,
     @Body() task: UpdateTaskDto,
@@ -52,6 +53,7 @@ export class TasksController {
   }
 
   @Post(':id/upload')
+  @UsePipes(new ValidationPipe())
   @UseInterceptors(FileInterceptor('attachment_url', multerConfig)) // Match your form field name
   async uploadFile(
     @Param('id') id: string,
